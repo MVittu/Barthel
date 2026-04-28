@@ -20,13 +20,17 @@
 # =============================================================================
 
 suppressPackageStartupMessages({
-  library(dplyr)
-  library(tidyr)
-  library(dagitty)
-  library(ggdag)
-  library(brms)
-  library(tidybayes)
-  library(marginaleffects)
+  if (!requireNamespace("dagitty", quietly = TRUE)) install.packages("dagitty")
+  suppressPackageStartupMessages({
+    packages <- c("dplyr", "tidyr", "dagitty", "ggdag",
+                  "brms", "tidybayes", "marginaleffects")
+    for (pkg in packages) {
+      if (!requireNamespace(pkg, quietly = TRUE)) {
+        install.packages(pkg)
+      }
+      library(pkg, character.only = TRUE)
+    }
+  })
 })
 
 # ── WORKING DIRECTORY GUARD ───────────────────────────────────────────────────
