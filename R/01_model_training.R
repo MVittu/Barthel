@@ -170,7 +170,7 @@ cat("This will take several minutes — please wait...\n\n")
 # Random intercepts per patient and per item capture between-patient and
 # between-item baseline variability (the hierarchical structure).
 bart_model <- brm(
-  formula = Score ~ Age + Pathology + Comorbidity + (1 | PatientID) + (1 | Item),
+  formula = Score~ Age + Pathology + Comorbidity + (1 | PatientID) + (1 | Item),
   data    = long,
   family  = cumulative("probit"),
   iter    = 2000,
