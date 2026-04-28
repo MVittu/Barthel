@@ -1,0 +1,13 @@
+# Data and results (local only)
+data/
+results/
+
+# R environment
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# OS files
+.DS_Store
+Thumbs.db
