@@ -282,12 +282,12 @@ causal_model <- brm(
   formula = Score ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID) + (1 | Item),
   data    = causal_long,
   family  = cumulative("probit"),
-  iter    = 2000,
+  iter    = 5000,
   warmup  = 1000,
-  chains  = 2,
+  chains  = 4,
   cores   = n_cores,
   seed    = 42,
-  control = list(adapt_delta = 0.95),
+  control = list(adapt_delta = 0.99),
   silent  = 2,
   refresh = 250
 )
