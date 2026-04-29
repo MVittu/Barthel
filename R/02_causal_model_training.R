@@ -271,7 +271,7 @@ cat("- The coefficient on Cardiovascular_Disease is conditioned on Age & Patholo
 cat("- Later, G-computation marginalizes over these confounders to compute the causal effect.\n\n")
 
 # MCMC settings: lightweight for quick testing/iteration
-n_cores <- min(parallel::detectCores(logical = FALSE), 2L)
+n_cores <- min(parallel::detectCores(logical = FALSE), 4L)
 cat(sprintf("MCMC: 2 chains × 2000 iterations (1000 warmup) on %d core(s)\n", n_cores))
 cat("This will take 2-3 minutes...\n\n")
 
