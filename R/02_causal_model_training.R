@@ -1,4 +1,3 @@
-# =============================================================================
 # 02_causal_model_training.R
 # Barthel Index — Bayesian Causal Inference Model Training
 # Causal Framework: Judea Pearl's Structural Causal Model (SCM) & G-Computation
@@ -17,7 +16,6 @@
 #   Rscript R/02_causal_model_training.R
 # or interactively (working directory = project root):
 #   source("R/02_causal_model_training.R")
-# =============================================================================
 
 suppressPackageStartupMessages({
   packages <- c("dplyr", "tidyr", "dagitty", "ggdag", "ggplot2",
@@ -30,7 +28,7 @@ suppressPackageStartupMessages({
   }
 })
 
-# ── WORKING DIRECTORY GUARD ───────────────────────────────────────────────────
+# WORKING DIRECTORY GUARD
 # All relative paths assume the project root as CWD. If the script is invoked
 # from inside R/ (e.g. cd R && Rscript 02_causal_model_training.R), step up one level.
 if (!file.exists("data/Dataset.csv")) {
@@ -45,10 +43,7 @@ if (!file.exists("data/Dataset.csv")) {
   }
 }
 
-# =============================================================================
 # PART 1: DATA SIMULATION & PREPROCESSING
-# =============================================================================
-
 cat("=== CAUSAL INFERENCE PIPELINE ===\n\n")
 
 # ── Step 1a: Load Real Dataset ────────────────────────────────────────────────
@@ -59,7 +54,7 @@ raw <- read.csv("data/Dataset.csv",
 names(raw) <- trimws(names(raw))
 cat(sprintf("Loaded: %d rows × %d columns\n", nrow(raw), ncol(raw)))
 
-# ── Step 1b: Feature Engineering & Causal Exposure Construction ──────────────
+# Step 1b: Feature Engineering & Causal Exposure Construction
 cat("\nStep 1b: Constructing causal Exposure (Cardiovascular_Disease)...\n")
 
 # CAUSAL INTERPRETATION:
@@ -105,7 +100,6 @@ Negative_Control_Outcome <- sample(c("Low", "Medium", "High"), n_patients,
 # MAIN OUTCOMES: Barthel items at discharge
 # These ARE causally affected by Cardiovascular_Disease (mediated through severity/recovery).
 # Causal mechanism: CVD limits cardiovascular reserve → slower rehabilitation.
-
 feeding_score <- ifelse(Cardiovascular_Disease == 1,
                         rnorm(n_patients, mean = 6, sd = 3),
                         rnorm(n_patients, mean = 8, sd = 2))
@@ -139,7 +133,7 @@ print(table(causal_data$Cardiovascular_Disease))
 cat("\nPathology distribution:\n")
 print(table(causal_data$Pathology))
 
-# ── Step 1c: Transform to Long Format & Discretize Barthel Items ──────────────
+# Step 1c: Transform to Long Format & Discretize Barthel Items
 cat("\nStep 1c: Transforming to long format and discretizing Barthel items...\n")
 
 # Define clinical cut-points for ordinal discretization
@@ -205,10 +199,7 @@ print(table(causal_long$Score, causal_long$Item))
 cat("\nCVD exposure by Item:\n")
 print(table(causal_long$Cardiovascular_Disease, causal_long$Item))
 
-# =============================================================================
 # PART 2: CAUSAL DAG SPECIFICATION
-# =============================================================================
-
 cat("\n=== STEP 2: CAUSAL DAG SPECIFICATION ===\n")
 
 # Define the Directed Acyclic Graph (DAG) using dagitty syntax.
@@ -257,10 +248,7 @@ cat("\nDAG plotted successfully.\n")
 saveRDS(dag, "R/causal_dag.rds")
 cat("DAG saved to: R/causal_dag.rds\n")
 
-# =============================================================================
 # PART 3: BAYESIAN HIERARCHICAL ORDINAL MODEL (Causal Specification)
-# =============================================================================
-
 cat("\n=== STEP 3: FITTING BAYESIAN CAUSAL MODEL ===\n")
 
 cat("Model Family: cumulative(probit)\n")
@@ -272,7 +260,14 @@ cat("- Later, G-computation marginalizes over these confounders to compute the c
 
 # MCMC settings: lightweight for quick testing/iteration
 n_cores <- min(parallel::detectCores(logical = FALSE), 4L)
-cat(sprintf("MCMC: 2 chains × 2000 iterations (1000 warmup) on %d core(s)\n", n_cores))
+
+# Define MCMC parameters for readability and dynamic reporting
+n_chains <- 4
+n_iter <- 500
+n_warmup <- 100
+
+cat(sprintf("MCMC: %d chains × %d iterations (%d warmup) on %d core(s)\n", 
+            n_chains, n_iter, n_warmup, n_cores))
 
 set.seed(42)
 
@@ -281,9 +276,9 @@ causal_model <- brm(
   formula = Score ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID) + (1 | Item),
   data    = causal_long,
   family  = cumulative("probit"),
-  iter    = 500,
-  warmup  = 100,
-  chains  = 4,
+  iter    = n_iter,
+  warmup  = n_warmup,
+  chains  = n_chains,
   cores   = n_cores,
   seed    = 42,
   control = list(adapt_delta = 0.99),
@@ -291,10 +286,7 @@ causal_model <- brm(
   refresh = 100
 )
 
-# =============================================================================
 # PART 4: DIAGNOSTICS & CONVERGENCE CHECKS
-# =============================================================================
-
 cat("\n=== STEP 4: MCMC DIAGNOSTICS ===\n")
 print(summary(causal_model))
 
@@ -311,10 +303,7 @@ cvd_posterior <- as_draws_df(causal_model, variable = "b_Cardiovascular_Disease"
 cat("\nPosterior Summary: Effect of Cardiovascular_Disease (log-odds scale)\n")
 print(summary(cvd_posterior))
 
-# =============================================================================
 # PART 5: NEGATIVE CONTROL VALIDATION
-# =============================================================================
-
 cat("\n=== STEP 5: NEGATIVE CONTROL OUTCOME VALIDATION ===\n")
 cat("Fitting auxiliary model on Negative_Control_Outcome...\n")
 cat("(Should show NO causal effect, validating model assumptions)\n\n")
@@ -350,10 +339,7 @@ cvd_neg_ctrl <- as_draws_df(negative_ctrl_model, variable = "b_Cardiovascular_Di
 cat("\nNegative Control: Effect of Cardiovascular_Disease should be ≈ 0\n")
 print(summary(cvd_neg_ctrl))
 
-# =============================================================================
 # PART 6: SAVE ALL OUTPUTS
-# =============================================================================
-
 cat("\n=== STEP 6: SAVING OUTPUTS ===\n")
 
 # Save the fitted causal model
