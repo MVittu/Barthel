@@ -273,7 +273,6 @@ cat("- Later, G-computation marginalizes over these confounders to compute the c
 # MCMC settings: lightweight for quick testing/iteration
 n_cores <- min(parallel::detectCores(logical = FALSE), 4L)
 cat(sprintf("MCMC: 2 chains × 2000 iterations (1000 warmup) on %d core(s)\n", n_cores))
-cat("This will take 2-3 minutes...\n\n")
 
 set.seed(42)
 
@@ -282,14 +281,14 @@ causal_model <- brm(
   formula = Score ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID) + (1 | Item),
   data    = causal_long,
   family  = cumulative("probit"),
-  iter    = 5000,
-  warmup  = 1000,
+  iter    = 500,
+  warmup  = 100,
   chains  = 4,
   cores   = n_cores,
   seed    = 42,
   control = list(adapt_delta = 0.99),
   silent  = 2,
-  refresh = 250
+  refresh = 100
 )
 
 # =============================================================================
@@ -338,13 +337,13 @@ negative_ctrl_model <- brm(
   formula = Outcome ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID),
   data    = negative_ctrl_long,
   family  = categorical("logit"),
-  iter    = 1000,
-  warmup  = 500,
-  chains  = 2,
+  iter    = 500,
+  warmup  = 100,
+  chains  = 4,
   cores   = n_cores,
   seed    = 42,
   silent  = 2,
-  refresh = 0
+  refresh = 100
 )
 
 cvd_neg_ctrl <- as_draws_df(negative_ctrl_model, variable = "b_Cardiovascular_Disease")
