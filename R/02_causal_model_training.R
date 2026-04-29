@@ -141,7 +141,7 @@ cat("\nStep 1c: Transforming to long format and discretizing Barthel items...\n"
 discretize_score <- function(score, item_name) {
   score <- as.numeric(score)
   
-  case_when(
+  dplyr::case_when(
     is.na(score) ~ NA_character_,
     
     # FEEDING (max 10 points)
