@@ -271,20 +271,26 @@ cat(sprintf("MCMC: %d chains × %d iterations (%d warmup) on %d core(s)\n",
 
 set.seed(42)
 
-# Fit the Bayesian cumulative ordinal regression model
-causal_model <- brm(
-  formula = Score ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID) + (1 | Item),
-  data    = causal_long,
-  family  = cumulative("probit"),
-  iter    = n_iter,
-  warmup  = n_warmup,
-  chains  = n_chains,
-  cores   = n_cores,
-  seed    = 42,
-  control = list(adapt_delta = 0.99),
-  silent  = 2,
-  refresh = 100
-)
+causal_model_path <- "R/causal_barthel_model.rds"
+if (file.exists(causal_model_path)) {
+  cat("Cached model found — loading R/causal_barthel_model.rds (skipping MCMC).\n")
+  causal_model <- readRDS(causal_model_path)
+} else {
+  # Fit the Bayesian cumulative ordinal regression model
+  causal_model <- brm(
+    formula = Score ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID) + (1 | Item),
+    data    = causal_long,
+    family  = cumulative("probit"),
+    iter    = n_iter,
+    warmup  = n_warmup,
+    chains  = n_chains,
+    cores   = n_cores,
+    seed    = 42,
+    control = list(adapt_delta = 0.99),
+    silent  = 2,
+    refresh = 100
+  )
+}
 
 # PART 4: DIAGNOSTICS & CONVERGENCE CHECKS
 cat("\n=== STEP 4: MCMC DIAGNOSTICS ===\n")
