@@ -344,19 +344,19 @@ cat("\n=== STEP 6: SAVING OUTPUTS ===\n")
 
 # Save the fitted causal model
 saveRDS(causal_model, "R/causal_barthel_model.rds")
-cat("✓ Causal model saved to: R/causal_barthel_model.rds\n")
+cat("Causal model saved to: R/causal_barthel_model.rds\n")
 
 # Save the long-format causal data for app use
 saveRDS(causal_long, "R/causal_data_long.rds")
-cat("✓ Causal data saved to: R/causal_data_long.rds\n")
+cat("Causal data saved to: R/causal_data_long.rds\n")
 
 # Save full causal dataset for reference
 saveRDS(causal_data, "R/causal_data_wide.rds")
-cat("✓ Wide-format causal data saved to: R/causal_data_wide.rds\n")
+cat("Wide-format causal data saved to: R/causal_data_wide.rds\n")
 
 # Capture session info for reproducibility
 writeLines(capture.output(sessionInfo()), "R/causal_session_info.txt")
-cat("✓ Session info saved to: R/causal_session_info.txt\n")
+cat("Session info saved to: R/causal_session_info.txt\n")
 
 cat("\n" %+% strrep("=", 75) %+% "\n")
 cat("CAUSAL INFERENCE PIPELINE COMPLETE\n")
