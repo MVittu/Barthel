@@ -6,7 +6,7 @@
 
 ---
 
-## 📋 Overview
+## Overview
 
 This module implements a **clinical decision support system** for the Barthel Index of Activities of Daily Living (ADL). Rather than treating the Barthel total score as a continuous metric, we:
 
@@ -15,11 +15,11 @@ This module implements a **clinical decision support system** for the Barthel In
 3. **Provide recovery probabilities** stratified by patient pathology, age, and comorbidity
 4. **Generate clinical alerts** based on item-level predictions
 
-**Reference:** [Seccia et al. 2020 Dataset](https://example.com) — stroke and orthopedic rehabilitation cohort
+**Reference:** [Seccia et al. 2020 Dataset](https://figshare.com/articles/dataset/Data_of_patients_entering_a_rehabilitation_program/11663277) — stroke and orthopedic rehabilitation cohort
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -57,7 +57,7 @@ This script:
 - Fits a Bayesian cumulative-probit ordinal regression model with random effects for patients and items
 - Saves the trained model as `barthel_model.rds` and session info as `session_info.txt`
 
-**⏱ Runtime:** ~5–10 minutes (chains: 2, iterations: 2000, warmup: 1000)
+**Runtime:** widely depends on your machine.
 
 #### Step 2: Launch the Interactive Dashboard
 
@@ -76,7 +76,7 @@ The dashboard will open at `http://localhost:3838/` by default.
 
 ---
 
-## 📊 Application Features
+## Application Features
 
 ### Patient Profile Input
 
@@ -88,9 +88,9 @@ The dashboard will open at `http://localhost:3838/` by default.
 
 Three columns display **item-level recovery probabilities**:
 
-- 📌 **Feeding** (blue): probability of independent feeding
-- 🚶 **Ambulation** (green): probability of independent ambulation
-- 🪜 **Stairs** (purple): probability of independent stair negotiation
+- **Feeding** (blue): probability of independent feeding
+- **Ambulation** (green): probability of independent ambulation
+- **Stairs** (purple): probability of independent stair negotiation
 
 Each chart shows:
 - **Bar:** posterior mean probability
@@ -108,7 +108,7 @@ Biostatistical synthesis provides:
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```
 R/
@@ -128,7 +128,7 @@ R/
 
 ---
 
-## 🔧 Technical Details
+## Technical Details
 
 ### Model Specification
 
@@ -157,7 +157,7 @@ The training script checks **Rhat < 1.01** for all parameters to confirm MCMC co
 
 ---
 
-## 📖 Usage Examples
+## Usage Examples
 
 ### Example 1: Neurological Patient, Age 72, No Comorbidity
 
@@ -179,7 +179,7 @@ Dashboard will flag uncertainty in ambulation/stairs and recommend targeted asse
 
 ---
 
-## ⚙️ Reproducibility & Dependencies
+## Reproducibility & Dependencies
 
 ### Session Information
 
@@ -203,7 +203,7 @@ summary(barthel_model)
 
 ---
 
-## 🔍 Data Processing Details
+## Data Processing Details
 
 ### ICD-9 Classification Helpers
 
@@ -220,7 +220,7 @@ summary(barthel_model)
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Issue: `barthel_model.rds not found`
 
@@ -241,16 +241,16 @@ Rscript R/01_model_training.R
 **Solution:** Always run from the project root:
 
 ```bash
-# ✅ Correct
+# Correct
 Rscript R/01_model_training.R
 
-# ❌ Wrong
+# Wrong
 cd R && Rscript 01_model_training.R
 ```
 
 ---
 
-## 📚 References & Learning Resources
+## References & Learning Resources
 
 - **Bayesian Ordinal Regression:** [brms documentation](https://paul-buerkner.github.io/brms/)
 - **Credible Intervals & Uncertainty:** [tidybayes cookbook](https://mjskay.github.io/tidybayes/)
@@ -259,26 +259,16 @@ cd R && Rscript 01_model_training.R
 
 ---
 
-## 📝 License & Attribution
+## License & Attribution
 
 This analysis builds on rehabilitation outcome research methodologies. Use responsibly for clinical audit and quality improvement.
 
 **Citation:**  
-Barthel Index · Bayesian Clinical Decision Support. [Your Repository/Year].
+Barthel Index · Bayesian Clinical Decision Support. [Work in progress].
 
 ---
 
-## 🤝 Contributing
-
-To extend this module:
-
-1. Add new Barthel items in `01_model_training.R` (lines ~104–110)
-2. Update item-level plots in `app.R` (lines ~167–169)
-3. Retrain the model and validate convergence diagnostics
-
----
-
-## ❓ Questions?
+## Questions?
 
 For questions on model specification, Bayesian methods, or clinical interpretation, refer to:
 
@@ -289,4 +279,4 @@ For questions on model specification, Bayesian methods, or clinical interpretati
 ---
 
 **Last Updated:** 2026-04-28  
-**Status:** Production Ready ✅
+**Status:** Production Ready
