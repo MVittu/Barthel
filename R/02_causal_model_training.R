@@ -299,9 +299,44 @@ if (any(rhats > 1.01, na.rm = TRUE)) {
 
 # Extract the posterior distribution of the Cardiovascular_Disease coefficient
 # This is our MARGINAL ASSOCIATION (not yet the CAUSAL effect)
-cvd_posterior <- as_draws_df(causal_model, variable = "b_Cardiovascular_Disease")
-cat("\nPosterior Summary: Effect of Cardiovascular_Disease (log-odds scale)\n")
-print(summary(cvd_posterior))
+# Note: In cumulative ordinal models, the coefficient naming may include additional structure.
+# First, let's see what variables are available.
+
+tryCatch({
+  cvd_posterior <- as_draws_df(causal_model, variable = "b_Cardiovascular_Disease")
+}, error = function(e) {
+  cat("Variable 'b_Cardiovascular_Disease' not found. Attempting alternate naming...\n")
+  cvd_posterior <<- NULL
+})
+
+# If the direct variable doesn't exist, try to extract all fixed effects
+if (is.null(cvd_posterior)) {
+  cat("Available variables in model:\n")
+  all_vars <- names(as_draws_df(causal_model))
+  cvd_vars <- grep("Cardiovascular", all_vars, value = TRUE)
+  print(cvd_vars)
+  
+  # Extract using a more flexible approach
+  if (length(cvd_vars) > 0) {
+    cvd_posterior <- as_draws_df(causal_model, variable = cvd_vars[1])
+    cat("\nUsing variable: ", cvd_vars[1], "\n")
+  } else {
+    cat("\nExtracting all fixed effects...\n")
+    cvd_posterior <- as_draws_df(causal_model) %>%
+      select(starts_with("b_")) %>%
+      select(contains("Cardiovascular"))
+    if (ncol(cvd_posterior) == 0) {
+      cat("Could not extract Cardiovascular_Disease effect. Showing all coefficients:\n")
+      print(summary(causal_model))
+      cvd_posterior <- NULL
+    }
+  }
+}
+
+if (!is.null(cvd_posterior)) {
+  cat("\nPosterior Summary: Effect of Cardiovascular_Disease\n")
+  print(summary(cvd_posterior))
+}
 
 # PART 5: NEGATIVE CONTROL VALIDATION
 cat("\n=== STEP 5: NEGATIVE CONTROL OUTCOME VALIDATION ===\n")
