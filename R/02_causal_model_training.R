@@ -300,7 +300,7 @@ rhats <- rhat(causal_model)
 if (any(rhats > 1.01, na.rm = TRUE)) {
   warning("Some Rhat > 1.01 — potential convergence issues.")
 } else {
-  cat("\n✓ Convergence OK: all Rhat < 1.01\n")
+  cat("Convergence OK: all Rhat < 1.01")
 }
 
 # Extract the posterior distribution of the Cardiovascular_Disease coefficient
@@ -362,19 +362,27 @@ negative_ctrl_long <- causal_data %>%
     Age = as.numeric(Age)
   )
 
-# Fit model on negative control outcome (should show null effect)
-negative_ctrl_model <- brm(
-  formula = Outcome ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID),
-  data    = negative_ctrl_long,
-  family  = categorical("logit"),
-  iter    = 500,
-  warmup  = 100,
-  chains  = 4,
-  cores   = n_cores,
-  seed    = 42,
-  silent  = 2,
-  refresh = 100
-)
+negative_ctrl_model_path <- "R/negative_ctrl_model.rds"
+if (file.exists(negative_ctrl_model_path)) {
+  cat("Cached negative-control model found — loading R/negative_ctrl_model.rds (skipping MCMC).\n")
+  negative_ctrl_model <- readRDS(negative_ctrl_model_path)
+} else {
+  # Fit model on negative control outcome (should show null effect)
+  negative_ctrl_model <- brm(
+    formula = Outcome ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID),
+    data    = negative_ctrl_long,
+    family  = categorical("logit"),
+    iter    = 500,
+    warmup  = 100,
+    chains  = 4,
+    cores   = n_cores,
+    seed    = 42,
+    silent  = 2,
+    refresh = 100
+  )
+  saveRDS(negative_ctrl_model, negative_ctrl_model_path)
+  cat("Negative-control model saved to: R/negative_ctrl_model.rds\n")
+}
 
 cvd_neg_ctrl <- as_draws_df(negative_ctrl_model, variable = "b_Cardiovascular_Disease")
 cat("\nNegative Control: Effect of Cardiovascular_Disease should be ≈ 0\n")
