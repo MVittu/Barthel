@@ -8,9 +8,9 @@ Interactive Shiny application for recovery probability estimation using a Bayesi
 
 | Branch | Purpose |
 |--------|---------|
-| `main` | Stable, working code — production-ready |
+| `main` | Stable, working code; production-ready |
 | `experiments` | Active development: full MCMC settings (2000 iter, 4 chains), all features |
-| `fast-experiments` | Lightweight version of `experiments`: fewer iterations (500), fewer chains (2), reduced `ndraws` — for quick feedback during development |
+| `fast-experiments` | Lightweight version of `experiments`: fewer iterations (500), fewer chains (2), reduced `ndraws`; for quick feedback during development |
 
 Changes flow: `fast-experiments` → `experiments` → `main` once validated.
 
@@ -18,11 +18,11 @@ Changes flow: `fast-experiments` → `experiments` → `main` once validated.
 
 ## Pipelines
 
-### Pipeline 1 — Predictive Model (`01_model_training.R` + `app.R`)
+### Pipeline 1: Predictive Model (`01_model_training.R` + `app.R`)
 
 Bayesian hierarchical ordinal regression predicting Barthel item recovery at discharge, conditioned on pathology, age, and comorbidity.
 
-### Pipeline 2 — Causal Inference (`02_causal_model_training.R`)
+### Pipeline 2: Causal Inference (`02_causal_model_training.R`)
 
 Estimates the **causal effect** of Cardiovascular Disease on Barthel outcomes using a Structural Causal Model (DAG), G-computation, and negative control outcome validation.
 
@@ -46,7 +46,8 @@ install.packages(c("shiny", "bslib", "dplyr", "ggplot2", "brms",
 Rscript R/01_model_training.R
 ```
 
-Runtime: ~5–10 min (2 chains × 2000 iter). Outputs: `barthel_model.rds`, `session_info.txt`.
+Runtime: Heavily depends on your machine (for a quick test try the version on branch `fastexperiments`). 
+Outputs: `barthel_model.rds`, `session_info.txt`.
 
 ### Step 2: Launch the dashboard
 
@@ -91,11 +92,11 @@ Barthel items discretized into ordered categories: `Dependent < Assistance < Ind
 
 ## Troubleshooting
 
-**`barthel_model.rds not found`** — Run `01_model_training.R` first.
+**`barthel_model.rds not found`**: Run `01_model_training.R` first.
 
-**`Cannot locate data/Dataset.csv`** — Always run from the project root:
+**`Cannot locate data/Dataset.csv`**: Always run from the project root:
 ```bash
 Rscript R/01_model_training.R   # correct
 ```
 
-**Rhat > 1.01** — Increase `iter` and `chains` in the training script.
+**Rhat > 1.01**: Increase `iter` and `chains` in the training script.
