@@ -263,8 +263,8 @@ n_cores <- min(parallel::detectCores(logical = FALSE), 4L)
 
 # Define MCMC parameters for readability and dynamic reporting
 n_chains <- 4
-n_iter <- 500
-n_warmup <- 100
+n_iter <- 1000
+n_warmup <- 250
 
 cat(sprintf("MCMC: %d chains × %d iterations (%d warmup) on %d core(s)\n", 
             n_chains, n_iter, n_warmup, n_cores))
@@ -372,8 +372,8 @@ if (file.exists(negative_ctrl_model_path)) {
     formula = Outcome ~ Age + Pathology + Cardiovascular_Disease + (1 | PatientID),
     data    = negative_ctrl_long,
     family  = categorical("logit"),
-    iter    = 500,
-    warmup  = 100,
+    iter    = 1000,
+    warmup  = 250,
     chains  = 4,
     cores   = n_cores,
     seed    = 42,
